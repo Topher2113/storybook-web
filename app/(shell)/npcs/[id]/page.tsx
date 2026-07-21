@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CodexError } from "@/components/codex/CodexError";
-import { NpcEditForm } from "@/components/codex/NpcEditForm";
 import { getNpc } from "@/lib/api/npcs";
 import { ApiError } from "@/lib/api/http";
 import { prettifyId } from "@/lib/game/format";
@@ -85,7 +84,9 @@ export default async function NpcDetailPage({
         </table>
       )}
 
-      <NpcEditForm npc={npc} />
+      {/* Editing is not exposed: the codex is read-only for players.
+          components/codex/NpcEditForm.tsx remains available if it's ever
+          wanted behind an admin surface. */}
     </main>
   );
 }

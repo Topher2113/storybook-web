@@ -27,9 +27,9 @@ const FEATURE_CARDS = [
     text: "Eight fates await. How many can you collect?",
   },
   {
-    href: "/quests",
-    title: "Quests",
-    text: "Earn XP and bottle caps helping the colony's NPCs.",
+    href: "/npcs",
+    title: "NPC Codex",
+    text: "Meet the eight residents of the sewers and their stories.",
   },
   {
     href: "/lore",

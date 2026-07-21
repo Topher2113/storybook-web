@@ -20,7 +20,7 @@ export default async function ShopsPage() {
     <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8">
       <h1 className="mb-1 text-3xl text-text">Shops</h1>
       <p className="mb-6 text-sm text-text/70">
-        Spend your bottle caps — earned from quests and discovering endings
+        Spend your bottle caps — earned by discovering endings
       </p>
       {shops.length === 0 && (
         <p className="rounded-2xl bg-surface p-6 text-sm text-text/70">

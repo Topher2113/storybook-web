@@ -23,9 +23,10 @@ Plus web-exclusive additions built on the full API surface:
 - **XP & bottle-cap economy** — quests pay their `reward_xp` as XP *and* caps
   (1 XP = 1 cap); discovering a new ending pays a flat 15-cap exploration
   bounty. The API has no wallet, so the economy is a client-side layer.
-- **Quests woven into the story** — NPCs offer their quests inside dialog;
-  arriving at a quest's target scene auto-completes it with a celebration
-  toast. Quest log page with accept/abandon (server 409s surfaced politely).
+- **Quests woven into the story** (dormant) — NPCs offer their quests inside
+  dialog and arriving at the target scene auto-completes them, but the live
+  database has no `quests` table yet, so the Quests tab is hidden and the
+  machinery waits (the `/quests` page still exists, just unlisted).
 - **Shops** — browse the three shops and buy stock with caps (adds to your
   satchel; synced to the server inventory when signed in).
 - **Fog-of-war world map** — the 51-scene graph drawn as zone columns with an
@@ -34,10 +35,10 @@ Plus web-exclusive additions built on the full API surface:
 - **Endings gallery** — 8 collectible fates; undiscovered ones are
   silhouettes.
 - **Lore library** — book-spread reader with page turns and arrow-key paging.
-- **NPC codex with live editing** — the edit form PATCHes through the Flask
-  service and surfaces its field-level validation envelope.
-- **Item workshop** — the catalog's public POST/DELETE endpoints as a small
-  forge/scrap UI.
+- **NPC codex** — all eight residents with their per-scene dialogs and
+  carried items, read via the Flask service. (An edit form exists in
+  `components/codex/NpcEditForm.tsx` but is deliberately not surfaced — the
+  world is read-only for players; same for the item workshop panel.)
 - **Guest-first auth** — play instantly; signing in (accounts are provisioned
   by the instructor) syncs current scene, satchel, and quest log to the cloud
   for cross-device resume, with a merge-on-login reconcile.
@@ -105,8 +106,6 @@ proxy with `curl https://<app>.vercel.app/api/story`.
   and invites re-login.
 - First request after idle can take up to a minute (free-tier Render naps) —
   the UI says so instead of hanging silently.
-- The NPC edit form and item workshop hit intentionally public write
-  endpoints: changes are visible to every player of the shared world.
 - Some world data depends on the shared class database being migrated/seeded:
   as of writing, the live DB has no `quests` table and no shop stock, so quest
   offers and shop wares don't appear until the instructor applies the repo's

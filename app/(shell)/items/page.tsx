@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { CodexError } from "@/components/codex/CodexError";
-import { ItemAdminPanel } from "@/components/codex/ItemAdminPanel";
 import { listItems } from "@/lib/api/items";
 
 export const metadata: Metadata = { title: "Items" };
@@ -31,7 +30,9 @@ export default async function ItemsPage() {
           </div>
         ))}
       </div>
-      <ItemAdminPanel itemIds={items.map((i) => i.id)} />
+      {/* Creating/deleting items is not exposed: the catalog is read-only for
+          players. components/codex/ItemAdminPanel.tsx remains available if
+          it's ever wanted behind an admin surface. */}
     </main>
   );
 }

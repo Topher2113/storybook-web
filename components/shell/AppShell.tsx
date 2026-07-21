@@ -6,10 +6,11 @@ import type { ReactNode } from "react";
 import { useSession } from "@/components/providers/SessionProvider";
 import { AuthBanner } from "./AuthBanner";
 
+// The Quests tab is hidden until the live database gets the quests table —
+// the /quests page and the quest machinery stay in the code, dormant.
 const NAV_LINKS = [
   { href: "/story", label: "Play" },
   { href: "/map", label: "Map" },
-  { href: "/quests", label: "Quests" },
   { href: "/npcs", label: "NPCs" },
   { href: "/shops", label: "Shops" },
   { href: "/items", label: "Items" },
