@@ -1,36 +1,113 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Storybook Web — Rat Adventure: Sewers of the Pizza Kingdom
 
-## Getting Started
+A Next.js web rebuild of the Storybook mobile app (React Native/Expo) for a
+Masters course, grown into a full storybook game. You are a rat; the colony is
+hungry; every choice writes the next chapter.
 
-First, run the development server:
+**Live backend:** the shared class Express API on Render. **NPC endpoints** are
+served by my standalone [Python Flask NPC microservice](../../2026-summer-repo/npc-service/)
+(the course's backend-change assignment) with a byte-identical contract.
+
+## Features
+
+Everything from the mobile app:
+
+- Scene-by-scene story navigation with branching choices
+- NPC dialogs ("Talk to Big Whiskers…") in a modal
+- Endings with Play Again, skeleton loaders, error + retry states
+- All six switchable themes (Parchment, Candlelight, Morning Mist, Midnight
+  Tome, Forest Shadow, Gothic), each with its own storybook font pairing
+
+Plus web-exclusive additions built on the full API surface:
+
+- **XP & bottle-cap economy** — quests pay their `reward_xp` as XP *and* caps
+  (1 XP = 1 cap); discovering a new ending pays a flat 15-cap exploration
+  bounty. The API has no wallet, so the economy is a client-side layer.
+- **Quests woven into the story** — NPCs offer their quests inside dialog;
+  arriving at a quest's target scene auto-completes it with a celebration
+  toast. Quest log page with accept/abandon (server 409s surfaced politely).
+- **Shops** — browse the three shops and buy stock with caps (adds to your
+  satchel; synced to the server inventory when signed in).
+- **Fog-of-war world map** — the 51-scene graph drawn as zone columns with an
+  SVG edge overlay; unvisited scenes stay obscured (their titles never even
+  reach the DOM), your position pulses, endings are flagged.
+- **Endings gallery** — 8 collectible fates; undiscovered ones are
+  silhouettes.
+- **Lore library** — book-spread reader with page turns and arrow-key paging.
+- **NPC codex with live editing** — the edit form PATCHes through the Flask
+  service and surfaces its field-level validation envelope.
+- **Item workshop** — the catalog's public POST/DELETE endpoints as a small
+  forge/scrap UI.
+- **Guest-first auth** — play instantly; signing in (accounts are provisioned
+  by the instructor) syncs current scene, satchel, and quest log to the cloud
+  for cross-device resume, with a merge-on-login reconcile.
+
+## Architecture notes
+
+- **CORS/proxy:** the Express API sends no CORS headers, so the browser never
+  calls it directly. All client fetches use relative `/api/*` paths and
+  `next.config.ts` rewrites proxy them — the NPC family to `NPC_API_URL`
+  (Flask), everything else to `STORY_API_URL` (Express). Server components
+  call the Render URLs directly with the same routing rule.
+- **Cold starts:** both upstreams sleep on free-tier Render. Every request has
+  a 90s budget; GETs retry twice (3s/8s) with "waking the storybook server"
+  messaging; the home page fires warm-up pings at both services.
+- **State:** local-first. Progress lives in `localStorage`
+  (`storybook.progress.v1`) behind a pure reducer
+  ([lib/game/reducer.ts](lib/game/reducer.ts)); the caps balance is always
+  derived (earned − spent) so it can't drift. When signed in, scene/inventory/
+  quests also sync to the server (XP, caps, visited scenes, and endings are
+  local-only — the API has no endpoints for them). Tokens are ~1h Supabase
+  JWTs with no refresh endpoint: expiry silently downgrades to guest play with
+  a re-login banner, losing nothing.
+- **Themes:** six `[data-theme]` CSS-variable blocks bridged into Tailwind v4
+  utilities via `@theme inline`; ten Google fonts self-hosted through
+  `next/font`; a pre-hydration inline script prevents any flash of the wrong
+  theme.
+
+## Getting started
+
+Requires Node ≥ 20.9 (Next.js 16).
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # defaults point at the live class API
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Env vars (read by `next.config.ts` and server components only):
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Var | Purpose | Default |
+|---|---|---|
+| `STORY_API_URL` | Main Express API | `https://storybook-api-f6bt.onrender.com` |
+| `NPC_API_URL` | Flask NPC service (NPC routes) | falls back to `STORY_API_URL` |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scripts
 
-## Learn More
+```bash
+npm run dev     # dev server
+npm run build   # production build (also the type gate)
+npm run lint    # eslint
+npm test        # vitest — game reducer economy rules + API error normalization
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Deploying (Vercel)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Import the repo in Vercel (framework auto-detected), set `STORY_API_URL` and
+`NPC_API_URL` in the project's environment variables, deploy. Verify the
+proxy with `curl https://<app>.vercel.app/api/story`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Known limitations
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- XP, caps, visited scenes, and discovered endings are per-browser (the API
+  has no endpoints to store them).
+- Sessions last ~1 hour (no refresh endpoint); the app degrades to guest play
+  and invites re-login.
+- First request after idle can take up to a minute (free-tier Render naps) —
+  the UI says so instead of hanging silently.
+- The NPC edit form and item workshop hit intentionally public write
+  endpoints: changes are visible to every player of the shared world.
+- Some world data depends on the shared class database being migrated/seeded:
+  as of writing, the live DB has no `quests` table and no shop stock, so quest
+  offers and shop wares don't appear until the instructor applies the repo's
+  migrations. Every screen degrades gracefully to an empty/notice state.
