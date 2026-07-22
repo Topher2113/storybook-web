@@ -110,6 +110,14 @@ npm run lint    # eslint
 npm test        # vitest — game reducer economy rules + API error normalization
 ```
 
+## CI
+
+`.github/workflows/tests.yml` runs on every push to `main` and every pull
+request: `npm ci`, `npm run lint`, `npm test` (vitest), then `npm run build`
+as the type gate. No secrets or live API access needed — the vitest suite is
+pure (reducer logic + error normalization) and the dynamic routes render at
+request time, not build time.
+
 ## Known limitations
 
 - Accounts are dormant — everyone plays as a guest, so progress is
