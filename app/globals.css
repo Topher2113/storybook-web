@@ -1,26 +1,125 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Six storybook themes ported from the React Native app. Each [data-theme]
+   block swaps the full palette and the heading/body font pair; the @theme
+   bridge below turns them into Tailwind utilities (bg-background, bg-surface,
+   text-primary, border-accent, font-heading, font-body, ...). Parchment is
+   the default so a no-JS render still looks right. */
+
+:root,
+[data-theme="parchment"] {
+  --background: #f5edd6;
+  --surface: #ede0be;
+  --primary: #c9851a;
+  --text: #2c1810;
+  --accent: #8b4513;
+  --button-text: #fff8ee;
+  --theme-font-heading: var(--font-playfair);
+  --theme-font-body: var(--font-lora);
+  color-scheme: light;
+}
+
+[data-theme="candlelight"] {
+  --background: #fff8e7;
+  --surface: #fff0cc;
+  --primary: #e87c1a;
+  --text: #3d2200;
+  --accent: #cc5500;
+  --button-text: #fff8e7;
+  --theme-font-heading: var(--font-cinzel);
+  --theme-font-body: var(--font-eb-garamond);
+  color-scheme: light;
+}
+
+[data-theme="morning-mist"] {
+  --background: #eef2f7;
+  --surface: #dde6f0;
+  --primary: #4a9ebf;
+  --text: #1e3a52;
+  --accent: #2e7a9e;
+  --button-text: #f0f4f8;
+  --theme-font-heading: var(--font-nunito);
+  --theme-font-body: var(--font-nunito);
+  color-scheme: light;
+}
+
+[data-theme="midnight-tome"] {
+  --background: #0d1117;
+  --surface: #161b22;
+  --primary: #d4a843;
+  --text: #e2d9c8;
+  --accent: #c09030;
+  --button-text: #120e04;
+  --theme-font-heading: var(--font-cinzel-decorative);
+  --theme-font-body: var(--font-crimson);
+  color-scheme: dark;
+}
+
+[data-theme="forest-shadow"] {
+  --background: #0c1a0e;
+  --surface: #152417;
+  --primary: #3e7a2c;
+  --text: #d4c9a8;
+  --accent: #4a8c3a;
+  --button-text: #e8f4e8;
+  --theme-font-heading: var(--font-oswald);
+  --theme-font-body: var(--font-merriweather);
+  color-scheme: dark;
+}
+
+[data-theme="gothic"] {
+  --background: #120816;
+  --surface: #1e0f27;
+  --primary: #6b1220;
+  --text: #c9b8d8;
+  --accent: #7a1b2a;
+  --button-text: #f0e8f0;
+  --theme-font-heading: var(--font-im-fell);
+  --theme-font-body: var(--font-crimson);
+  color-scheme: dark;
 }
 
 @theme inline {
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-surface: var(--surface);
+  --color-primary: var(--primary);
+  --color-text: var(--text);
+  --color-accent: var(--accent);
+  --color-button-text: var(--button-text);
+  --font-heading: var(--theme-font-heading);
+  --font-body: var(--theme-font-body);
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text);
+  font-family: var(--theme-font-body), Georgia, serif;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--theme-font-heading), Georgia, serif;
+}
+
+/* Gothic's IM Fell English heading face is an italic-only cut. */
+[data-theme="gothic"] h1,
+[data-theme="gothic"] h2,
+[data-theme="gothic"] h3,
+[data-theme="gothic"] .font-heading {
+  font-style: italic;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.animate-skeleton {
+  animation: skeleton-pulse 1.2s ease-in-out infinite;
 }
