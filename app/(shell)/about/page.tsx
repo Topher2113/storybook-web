@@ -50,8 +50,7 @@ export default async function AboutPage() {
         are client-side mechanics layered on top of the live API.
       </p>
       <p className="text-sm leading-relaxed text-text/80">
-        Guest progress lives in your browser; signing in syncs your scene,
-        satchel, and quest log to the cloud.
+        Everyone plays as a guest for now — progress lives in your browser.
       </p>
     </main>
   );

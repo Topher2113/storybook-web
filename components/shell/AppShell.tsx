@@ -3,16 +3,15 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-import { useSession } from "@/components/providers/SessionProvider";
-import { AuthBanner } from "./AuthBanner";
 
 // The Quests tab is hidden until the live database gets the quests table —
 // the /quests page and the quest machinery stay in the code, dormant.
+// The Shops tab is hidden until shop stock is actually set up — the /shops
+// pages and BuyButton stay in the code, dormant.
 const NAV_LINKS = [
   { href: "/story", label: "Play" },
   { href: "/map", label: "Map" },
   { href: "/npcs", label: "NPCs" },
-  { href: "/shops", label: "Shops" },
   { href: "/items", label: "Items" },
   { href: "/endings", label: "Endings" },
   { href: "/lore", label: "Lore" },
@@ -20,7 +19,6 @@ const NAV_LINKS = [
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { status, user } = useSession();
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-text">
@@ -46,12 +44,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             </Link>
           ))}
           <span className="flex-1" />
-          <Link
-            href={status === "authed" ? "/settings" : "/login"}
-            className="shrink-0 rounded-lg px-3 py-1.5 text-sm text-text/80 transition hover:bg-surface"
-          >
-            {status === "authed" ? (user?.email ?? "Account") : "Sign In"}
-          </Link>
+          {/* Sign in/up is dormant for now — the API has no working
+              create-account path yet. Guests keep full local play; see
+              lib/supabaseClient.ts and the /login page for the code this
+              re-enables. */}
           <Link
             href="/settings"
             aria-label="Settings"
@@ -63,7 +59,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Link>
         </nav>
       </header>
-      <AuthBanner />
+      {/* AuthBanner is dormant along with sign-in/up — see components/shell/AuthBanner.tsx */}
       {children}
       <footer className="border-t border-accent/20 px-4 py-4 text-center text-xs text-text/50">
         Rat Adventure: Sewers of the Pizza Kingdom ·{" "}

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   ENDING_DISCOVERY_CAPS,
+  ENDING_DISCOVERY_XP,
   capsBalance,
   gameReducer,
 } from "@/lib/game/reducer";
@@ -33,13 +34,14 @@ describe("scene navigation", () => {
 });
 
 describe("ending discovery", () => {
-  it("pays the exploration bounty for a new ending only", () => {
+  it("pays the exploration bounty (XP and caps) for a new ending only", () => {
     let s = gameReducer(base, { type: "DISCOVER_ENDING", endingId: "grab-pizza" });
     expect(s.discoveredEndings).toEqual(["grab-pizza"]);
     expect(capsBalance(s)).toBe(ENDING_DISCOVERY_CAPS);
+    expect(s.xp).toBe(ENDING_DISCOVERY_XP);
     s = gameReducer(s, { type: "DISCOVER_ENDING", endingId: "grab-pizza" });
     expect(capsBalance(s)).toBe(ENDING_DISCOVERY_CAPS);
-    expect(s.xp).toBe(0);
+    expect(s.xp).toBe(ENDING_DISCOVERY_XP);
   });
 });
 

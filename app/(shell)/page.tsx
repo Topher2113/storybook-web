@@ -55,14 +55,10 @@ export default async function HomePage() {
         A choose-your-own-adventure storybook
       </p>
       <h1 className="mb-3 text-4xl text-text sm:text-5xl">{story.title}</h1>
-      <p className="mb-2 max-w-xl text-text/80">
+      <p className="mb-8 max-w-xl text-text/80">
         You are a rat. The colony is hungry, the tunnels are shifting, and
         somewhere above, a whole pizza is getting cold. Every choice writes the
         next chapter.
-      </p>
-      <p className="mb-8 text-sm text-text/60">
-        by {story.author} · {story.sceneCount} scenes · {story.endingCount}{" "}
-        endings
       </p>
       <HomeActions />
 

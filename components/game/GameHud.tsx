@@ -14,6 +14,7 @@ export function GameHud() {
   const { progress, dispatch, hydrated, questCatalog } = useGame();
   const { token, handleAuthError } = useSession();
   const [satchelOpen, setSatchelOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
 
   if (!hydrated) {
     return <div className="animate-skeleton h-8 w-40 rounded-full bg-surface" />;
@@ -47,6 +48,15 @@ export function GameHud() {
       >
         🎒 {progress.inventory.length}
       </button>
+      <button
+        type="button"
+        onClick={() => setInfoOpen((o) => !o)}
+        aria-label="How XP and caps work"
+        aria-expanded={infoOpen}
+        className="rounded-full bg-surface px-2.5 py-1 text-text/60 transition hover:text-text"
+      >
+        ⓘ
+      </button>
       {activeQuest && (
         <Link
           href="/quests"
@@ -57,12 +67,27 @@ export function GameHud() {
         </Link>
       )}
 
+      {infoOpen && (
+        <div className="absolute right-0 top-10 z-40 w-72 rounded-2xl bg-surface p-4 text-left text-sm shadow-xl">
+          <p className="mb-2 font-bold">✨ XP &amp; 🧢 Bottle caps</p>
+          <p className="mb-2 text-text/80">
+            Both are earned the same way: reaching a new ending for the first
+            time pays a flat +15 XP and +15 caps exploration bounty. Endings
+            you&apos;ve already found don&apos;t pay out again.
+          </p>
+          <p className="text-text/60">
+            Caps are the sewer economy&apos;s currency — the shops that
+            accept them are still being stocked, so hang onto them for now.
+          </p>
+        </div>
+      )}
+
       {satchelOpen && (
         <div className="absolute right-0 top-10 z-40 w-64 rounded-2xl bg-surface p-4 text-left shadow-xl">
           <p className="mb-2 font-bold">Satchel</p>
           {progress.inventory.length === 0 ? (
             <p className="text-sm text-text/60">
-              Empty. Shops around the sewers sell useful things for caps.
+              Empty for now — the shops haven&apos;t opened yet.
             </p>
           ) : (
             <ul className="flex flex-col gap-1">

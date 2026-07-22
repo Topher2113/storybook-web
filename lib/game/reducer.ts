@@ -3,9 +3,11 @@
 //
 //   - Completing a quest pays its reward_xp as XP *and* the same number of
 //     bottle caps ("the Pizza Kingdom pays by the whisker" — 1 XP = 1 cap).
-//   - Discovering an ending you haven't seen before pays a flat 15-cap
-//     exploration bounty (no XP), so guests who skip quests still get a
-//     shop budget.
+//   - Discovering an ending you haven't seen before pays a flat 15 XP and 15
+//     caps exploration bounty. This is deliberately the *only* guaranteed
+//     source of XP: quests are dormant until the live database gets a
+//     `quests` table, so every player's XP/caps counters still move from
+//     normal play (finish a run → hit an ending) even with quests off.
 //   - Buying spends caps. Balance is always derived (earned − spent) and
 //     never stored, so it cannot drift.
 //
@@ -19,6 +21,7 @@ import {
 } from "./types";
 
 export const ENDING_DISCOVERY_CAPS = 15;
+export const ENDING_DISCOVERY_XP = 15;
 
 export type GameAction =
   | { type: "HYDRATE"; progress: Progress }
@@ -64,6 +67,7 @@ export function gameReducer(state: Progress, action: GameAction): Progress {
       return {
         ...state,
         discoveredEndings: [...state.discoveredEndings, action.endingId],
+        xp: state.xp + ENDING_DISCOVERY_XP,
         capsEarned: state.capsEarned + ENDING_DISCOVERY_CAPS,
         updatedAt: now(action.at),
       };

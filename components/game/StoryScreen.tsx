@@ -73,7 +73,10 @@ export function StoryScreen() {
         const isNew = !before.discoveredEndings.includes(next.id);
         dispatch({ type: "DISCOVER_ENDING", endingId: next.id });
         if (isNew) {
-          showToast("New ending discovered! +15 caps exploration bounty", "celebrate");
+          showToast(
+            "New ending discovered! +15 XP, +15 caps exploration bounty",
+            "celebrate",
+          );
         }
       }
 

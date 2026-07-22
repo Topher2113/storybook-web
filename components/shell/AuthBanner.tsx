@@ -6,6 +6,10 @@ import { useSession } from "@/components/providers/SessionProvider";
 
 // One quiet line under the header: an expired-session notice (priority) or a
 // save-your-progress nudge for guests. Hidden on the login page itself.
+//
+// Not rendered anywhere right now — sign-in/up is dormant (see AppShell),
+// so there's nothing to nudge guests toward. Kept intact for when /login
+// comes back; just re-add <AuthBanner /> where it was removed.
 export function AuthBanner() {
   const { status, authExpired } = useSession();
   const pathname = usePathname();

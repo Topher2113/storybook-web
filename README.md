@@ -1,13 +1,5 @@
 # Storybook Web — Rat Adventure: Sewers of the Pizza Kingdom
 
-A Next.js web rebuild of the Storybook mobile app (React Native/Expo) for a
-Masters course, grown into a full storybook game. You are a rat; the colony is
-hungry; every choice writes the next chapter.
-
-**Live backend:** the shared class Express API on Render. **NPC endpoints** are
-served by my standalone [Python Flask NPC microservice](../../2026-summer-repo/npc-service/)
-(the course's backend-change assignment) with a byte-identical contract.
-
 ## Features
 
 Everything from the mobile app:
@@ -21,14 +13,18 @@ Everything from the mobile app:
 Plus web-exclusive additions built on the full API surface:
 
 - **XP & bottle-cap economy** — quests pay their `reward_xp` as XP *and* caps
-  (1 XP = 1 cap); discovering a new ending pays a flat 15-cap exploration
-  bounty. The API has no wallet, so the economy is a client-side layer.
+  (1 XP = 1 cap); discovering a new ending pays a flat +15 XP/+15 caps
+  exploration bounty — the *only* guaranteed source right now, since quests
+  are dormant (see below). The API has no wallet, so the economy is a
+  client-side layer; an ⓘ button on the story HUD explains the rules in-app.
 - **Quests woven into the story** (dormant) — NPCs offer their quests inside
   dialog and arriving at the target scene auto-completes them, but the live
   database has no `quests` table yet, so the Quests tab is hidden and the
   machinery waits (the `/quests` page still exists, just unlisted).
-- **Shops** — browse the three shops and buy stock with caps (adds to your
-  satchel; synced to the server inventory when signed in).
+- **Shops** (dormant) — browse the three shops and buy stock with caps, but
+  the live database has no shop stock yet, so the Shops tab is hidden and the
+  machinery (BuyButton, etc.) waits (the `/shops` pages still exist, just
+  unlisted).
 - **Fog-of-war world map** — the 51-scene graph drawn as zone columns with an
   SVG edge overlay; unvisited scenes stay obscured (their titles never even
   reach the DOM), your position pulses, endings are flagged.
@@ -36,12 +32,19 @@ Plus web-exclusive additions built on the full API surface:
   silhouettes.
 - **Lore library** — book-spread reader with page turns and arrow-key paging.
 - **NPC codex** — all eight residents with their per-scene dialogs and
-  carried items, read via the Flask service. (An edit form exists in
-  `components/codex/NpcEditForm.tsx` but is deliberately not surfaced — the
-  world is read-only for players; same for the item workshop panel.)
-- **Guest-first auth** — play instantly; signing in (accounts are provisioned
-  by the instructor) syncs current scene, satchel, and quest log to the cloud
-  for cross-device resume, with a merge-on-login reconcile.
+  carried items, read via the Flask service. Dialogs are spoiler-gated to
+  scenes you've actually visited (same reasoning as the map's fog-of-war),
+  filtered client-side against local visited-scene history. (An edit form
+  exists in `components/codex/NpcEditForm.tsx` but is deliberately not
+  surfaced — the world is read-only for players; same for the item workshop
+  panel.)
+- **Accounts** (dormant) — sign-in and self-serve sign-up (the latter via
+  Supabase Auth directly from the browser, bypassing the class API — see
+  [Architecture notes](#architecture-notes)) are built but currently
+  switched off site-wide: the class API has no working create-account path
+  yet, so there was nothing consistent to offer. Everyone plays as a guest;
+  `/login`, `AuthBanner`, and the account section on Settings stay in the
+  code, dormant, ready to re-enable.
 
 ## Architecture notes
 
@@ -53,14 +56,27 @@ Plus web-exclusive additions built on the full API surface:
 - **Cold starts:** both upstreams sleep on free-tier Render. Every request has
   a 90s budget; GETs retry twice (3s/8s) with "waking the storybook server"
   messaging; the home page fires warm-up pings at both services.
+- **Sign-up (dormant):** the class API only exposes `/api/auth/login` and is off-limits to
+  change — it's shared with everyone else's deployment. The built sign-up
+  flow calls Supabase Auth directly from the browser
+  ([lib/supabaseClient.ts](lib/supabaseClient.ts)) with the project's
+  publishable/anon key — the same kind of key the Express server itself uses
+  server-side for its own auth client — so the session it returns is a
+  normal Supabase JWT that every existing endpoint already accepts. It's
+  currently switched off site-wide (no entry point in the nav, `/login`
+  shows a placeholder) since account creation doesn't have a fully working
+  path yet; re-enabling it is a matter of restoring the removed `<Link>`/
+  `<AuthBanner>` renders and swapping `/login`'s page body back to
+  `<LoginForm />` (still in the file, just unused).
 - **State:** local-first. Progress lives in `localStorage`
   (`storybook.progress.v1`) behind a pure reducer
   ([lib/game/reducer.ts](lib/game/reducer.ts)); the caps balance is always
-  derived (earned − spent) so it can't drift. When signed in, scene/inventory/
-  quests also sync to the server (XP, caps, visited scenes, and endings are
-  local-only — the API has no endpoints for them). Tokens are ~1h Supabase
-  JWTs with no refresh endpoint: expiry silently downgrades to guest play with
-  a re-login banner, losing nothing.
+  derived (earned − spent) so it can't drift. The cloud-sync half of this
+  (scene/inventory/quests to the server when signed in, ~1h Supabase JWTs
+  with silent expiry-to-guest) is real code but currently unreachable since
+  accounts are dormant (above) — everyone is a guest today, and XP, caps,
+  visited scenes, and endings are local-only regardless (the API has no
+  endpoints for them).
 - **Themes:** six `[data-theme]` CSS-variable blocks bridged into Tailwind v4
   utilities via `@theme inline`; ten Google fonts self-hosted through
   `next/font`; a pre-hydration inline script prevents any flash of the wrong
@@ -82,6 +98,8 @@ Env vars (read by `next.config.ts` and server components only):
 |---|---|---|
 | `STORY_API_URL` | Main Express API | `https://storybook-api-f6bt.onrender.com` |
 | `NPC_API_URL` | Flask NPC service (NPC routes) | falls back to `STORY_API_URL` |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL for sign-up | unused — sign-up is dormant, see above |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase publishable/anon key for sign-up | unused — sign-up is dormant, see above |
 
 ## Scripts
 
@@ -92,21 +110,16 @@ npm run lint    # eslint
 npm test        # vitest — game reducer economy rules + API error normalization
 ```
 
-## Deploying (Vercel)
-
-Import the repo in Vercel (framework auto-detected), set `STORY_API_URL` and
-`NPC_API_URL` in the project's environment variables, deploy. Verify the
-proxy with `curl https://<app>.vercel.app/api/story`.
-
 ## Known limitations
 
-- XP, caps, visited scenes, and discovered endings are per-browser (the API
-  has no endpoints to store them).
-- Sessions last ~1 hour (no refresh endpoint); the app degrades to guest play
-  and invites re-login.
+- Accounts are dormant — everyone plays as a guest, so progress is
+  per-browser and doesn't follow you across devices.
+- XP, caps, visited scenes, and discovered endings are per-browser regardless
+  (the API has no endpoints to store them).
 - First request after idle can take up to a minute (free-tier Render naps) —
   the UI says so instead of hanging silently.
 - Some world data depends on the shared class database being migrated/seeded:
-  as of writing, the live DB has no `quests` table and no shop stock, so quest
-  offers and shop wares don't appear until the instructor applies the repo's
-  migrations. Every screen degrades gracefully to an empty/notice state.
+  as of writing, the live DB has no `quests` table and no shop stock, so the
+  Quests and Shops tabs are hidden until the instructor applies the repo's
+  migrations. The pages and their machinery stay in the code, dormant — every
+  screen degrades gracefully to an empty/notice state if visited directly.

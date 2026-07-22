@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { GameHud } from "@/components/game/GameHud";
-import { AuthBanner } from "@/components/shell/AuthBanner";
 
 // Immersive chrome for the story screen: no site nav, just a quiet way home
 // and the settings gear (matching the RN story screen's header).
@@ -23,7 +22,7 @@ export default function GameLayout({ children }: { children: ReactNode }) {
           ⚙
         </Link>
       </header>
-      <AuthBanner />
+      {/* AuthBanner is dormant along with sign-in/up — see components/shell/AuthBanner.tsx */}
       <div className="mx-auto w-full max-w-2xl px-4 pb-2">
         <GameHud />
       </div>

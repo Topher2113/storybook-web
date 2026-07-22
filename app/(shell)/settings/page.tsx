@@ -1,15 +1,11 @@
 "use client";
 
-import Link from "next/link";
-import { useSession } from "@/components/providers/SessionProvider";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { ThemePreviewCard } from "@/components/theme/ThemePreviewCard";
-import { Button } from "@/components/ui/Button";
 import { THEMES } from "@/lib/themes";
 
 export default function SettingsPage() {
   const { themeId, setTheme } = useTheme();
-  const { status, user, logout } = useSession();
   const lightCount = THEMES.filter((t) => !t.dark).length;
   const darkCount = THEMES.length - lightCount;
 
@@ -31,25 +27,10 @@ export default function SettingsPage() {
       </div>
 
       <h2 className="mb-2 mt-10 text-2xl text-text">Account</h2>
-      {status === "authed" ? (
-        <div className="flex items-center justify-between rounded-2xl bg-surface p-4">
-          <p className="text-sm">
-            Signed in as <strong>{user?.email}</strong> — scene, inventory, and
-            quests sync to the cloud.
-          </p>
-          <Button variant="outline" onClick={logout}>
-            Log out
-          </Button>
-        </div>
-      ) : (
-        <p className="rounded-2xl bg-surface p-4 text-sm text-text/80">
-          Playing as guest — progress lives in this browser.{" "}
-          <Link href="/login?from=/settings" className="font-bold underline">
-            Sign in
-          </Link>{" "}
-          to sync across devices.
-        </p>
-      )}
+      <p className="rounded-2xl bg-surface p-4 text-sm text-text/80">
+        Playing as guest — progress lives in this browser. Accounts and
+        cross-device sync aren&apos;t available yet.
+      </p>
     </main>
   );
 }

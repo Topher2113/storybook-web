@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CodexError } from "@/components/codex/CodexError";
+import { NpcDialogList } from "@/components/codex/NpcDialogList";
 import { getNpc } from "@/lib/api/npcs";
 import { ApiError } from "@/lib/api/http";
 import { prettifyId } from "@/lib/game/format";
@@ -40,26 +41,13 @@ export default async function NpcDetailPage({
       <h1 className="mb-2 mt-2 text-3xl text-text">{npc.name}</h1>
       <p className="mb-8 italic text-text/80">{npc.description}</p>
 
-      <h2 className="mb-3 text-xl text-text">
-        Dialogs · {npc.dialogs.length}
-      </h2>
+      <h2 className="mb-3 text-xl text-text">Dialogs</h2>
       {npc.dialogs.length === 0 ? (
         <p className="mb-8 text-sm text-text/60">
           They have nothing to say — yet.
         </p>
       ) : (
-        <ul className="mb-8 flex flex-col gap-3">
-          {npc.dialogs.map((d) => (
-            <li key={d.sceneId} className="rounded-2xl bg-surface p-4">
-              <p className="mb-1 text-xs font-bold uppercase tracking-wide text-accent">
-                {prettifyId(d.sceneId)}
-              </p>
-              <p className="text-sm leading-relaxed text-text/90">
-                &ldquo;{d.dialog}&rdquo;
-              </p>
-            </li>
-          ))}
-        </ul>
+        <NpcDialogList dialogs={npc.dialogs} />
       )}
 
       <h2 className="mb-3 text-xl text-text">Carrying</h2>

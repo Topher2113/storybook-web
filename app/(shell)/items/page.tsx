@@ -18,7 +18,8 @@ export default async function ItemsPage() {
     <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8">
       <h1 className="mb-1 text-3xl text-text">Item Catalog</h1>
       <p className="mb-6 text-sm text-text/70">
-        {items.length} treasures of the sewers — buy them in shops, carry them
+        {items.length} treasures of the sewers — the shops that sell them
+        aren&apos;t open yet, but you can browse the catalog and carry them
         in your satchel
       </p>
       <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
