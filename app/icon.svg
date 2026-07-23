@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="Rat Adventure: Sewers of the Pizza Kingdom">
+  <title>Rat Adventure: Sewers of the Pizza Kingdom</title>
+  <defs>
+    <radialGradient id="seal" cx="40%" cy="34%" r="72%">
+      <stop offset="0" stop-color="#EDBD57"/>
+      <stop offset="0.62" stop-color="#D2952F"/>
+      <stop offset="1" stop-color="#B0701C"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Storybook wax-seal medallion -->
+  <circle cx="32" cy="32" r="31" fill="#432911"/>
+  <circle cx="32" cy="32" r="28" fill="url(#seal)"/>
+  <circle cx="32" cy="32" r="24.5" fill="none" stroke="#8B4513" stroke-opacity="0.35" stroke-width="1.5"/>
+
+  <!-- Rat ears, poking up behind the crust -->
+  <circle cx="24" cy="19" r="5.2" fill="#2E1B0E"/>
+  <circle cx="40" cy="19" r="5.2" fill="#2E1B0E"/>
+  <circle cx="24" cy="19.6" r="2.3" fill="#D98C6A"/>
+  <circle cx="40" cy="19.6" r="2.3" fill="#D98C6A"/>
+
+  <!-- Pizza slice (its tip doubles as the rat's snout) -->
+  <path d="M20 24 Q32 20.5 44 24 L32 48 Z" fill="#F4C34E"/>
+  <path d="M20 24 Q32 20.5 44 24" fill="none" stroke="#B96B25" stroke-width="4.5" stroke-linecap="round"/>
+
+  <!-- Eyes -->
+  <circle cx="28" cy="30" r="1.9" fill="#2E1B0E"/>
+  <circle cx="36" cy="30" r="1.9" fill="#2E1B0E"/>
+  <circle cx="28.6" cy="29.4" r="0.6" fill="#F7E6C4"/>
+  <circle cx="36.6" cy="29.4" r="0.6" fill="#F7E6C4"/>
+
+  <!-- Pepperoni -->
+  <circle cx="30" cy="37" r="2.2" fill="#C0392B"/>
+  <circle cx="36" cy="38" r="2" fill="#C0392B"/>
+  <circle cx="32" cy="43" r="1.8" fill="#C0392B"/>
+
+  <!-- Snout tip / nose -->
+  <circle cx="32" cy="46.4" r="1.5" fill="#2E1B0E"/>
+
+  <!-- Whiskers -->
+  <g stroke="#2E1B0E" stroke-width="0.9" stroke-linecap="round" stroke-opacity="0.75" fill="none">
+    <path d="M30.5 46.4 Q25 46.6 21.5 44.8"/>
+    <path d="M33.5 46.4 Q39 46.6 42.5 44.8"/>
+  </g>
+
+  <!-- Curling tail -->
+  <path d="M32 47.5 Q41 54 47 49 Q51 45.5 47.8 41.8" fill="none" stroke="#2E1B0E" stroke-width="2.4" stroke-linecap="round"/>
+</svg>
